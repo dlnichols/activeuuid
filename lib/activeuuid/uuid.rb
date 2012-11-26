@@ -14,12 +14,14 @@ module UUIDTools
     end
 
     def as_json(options = nil)
-      hexdigest.upcase
+      #hexdigest.upcase
+      to_s
     end
 
-    def to_param
-      hexdigest.upcase
-    end
+    alias_method :to_param, :to_s
+    #def to_param
+    #  hexdigest.upcase
+    #end
 
     def self.serialize(value)
       case value
@@ -70,6 +72,12 @@ module Arel
     class PostgreSQL < Arel::Visitors::ToSql
       def visit_UUIDTools_UUID(o)
         "'#{o.to_s}'"
+      end
+    end
+
+    class WhereSql < Arel::Visitors::ToSql
+      def visit_UUIDTools_UUID(o)
+        o.quoted_id
       end
     end
   end
